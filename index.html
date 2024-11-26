@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Chore Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .admin-console {
+            margin-bottom: 20px;
+        }
+        .admin-console label, .admin-console input, .admin-console button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .chore-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .chore-item {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chatbot {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .chatbot input, .chatbot button {
+            display: block;
+            width: calc(100% - 22px);
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .chatbot-messages {
+            height: 150px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Family Chore Tracker</h1>
+        <div class="admin-console">
+            <h2>Admin Console</h2>
+            <label for="chore-name">Chore Name:</label>
+            <input type="text" id="chore-name" placeholder="Enter chore name">
+            <label for="assigned-to">Assigned To:</label>
+            <input type="text" id="assigned-to" placeholder="Enter person's name">
+            <button onclick="addChore()">Add Chore</button>
+        </div>
+        <ul class="chore-list" id="chore-list">
+            <!-- Chores will appear here -->
+        </ul>
+        <div class="chatbot">
+            <h2>Chatbot Reminders</h2>
+            <div class="chatbot-messages" id="chatbot-messages"></div>
+            <input type="text" id="chat-input" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let chores = [];
+
+        function addChore() {
+            const choreName = document.getElementById('chore-name').value;
+            const assignedTo = document.getElementById('assigned-to').value;
+            if (choreName && assignedTo) {
+                chores.push({ name: choreName, assignedTo: assignedTo });
+                updateChoreList();
+                document.getElementById('chore-name').value = '';
+                document.getElementById('assigned-to').value = '';
+            }
+        }
+
+        function updateChoreList() {
+            const choreListElement = document.getElementById('chore-list');
+            choreListElement.innerHTML = '';
+            chores.forEach(chore => {
+                const choreItem = document.createElement('li');
+                choreItem.className = 'chore-item';
+                choreItem.textContent = `${chore.name} - Assigned to: ${chore.assignedTo}`;
+                choreListElement.appendChild(choreItem);
+            });
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('chat-input').value;
+            if (userInput) {
+                addMessage('User', userInput);
+                document.getElementById('chat-input').value = '';
+                // Simulate bot response
+                setTimeout(() => {
+                    addMessage('Bot', `Reminder: Don't forget about your chores!`);
+                }, 1000);
+            }
+        }
+
+        function addMessage(sender, message) {
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `${sender}: ${message}`;
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
