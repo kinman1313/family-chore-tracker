@@ -23,10 +23,11 @@
             text-align: center;
             color: #333;
         }
-        .admin-console {
+        .admin-console, .child-view {
             margin-bottom: 20px;
         }
-        .admin-console label, .admin-console input, .admin-console button {
+        .admin-console label, .admin-console input, .admin-console button,
+        .child-view label, .child-view input, .child-view button {
             display: block;
             width: 100%;
             margin-bottom: 10px;
@@ -69,22 +70,58 @@
             border-radius: 4px;
             background: #fff;
         }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tabs button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .tabs button.active {
+            background: #0056b3;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Family Chore Tracker</h1>
-        <div class="admin-console">
+        <div class="tabs">
+            <button onclick="showTab('admin')">Admin Console</button>
+            <button onclick="showTab('child')">Child View</button>
+        </div>
+        
+        <div id="admin" class="tab-content active">
             <h2>Admin Console</h2>
             <label for="chore-name">Chore Name:</label>
             <input type="text" id="chore-name" placeholder="Enter chore name">
             <label for="assigned-to">Assigned To:</label>
             <input type="text" id="assigned-to" placeholder="Enter person's name">
             <button onclick="addChore()">Add Chore</button>
+            <ul class="chore-list" id="chore-list">
+                <!-- Chores will appear here -->
+            </ul>
         </div>
-        <ul class="chore-list" id="chore-list">
-            <!-- Chores will appear here -->
-        </ul>
+        
+        <div id="child" class="tab-content">
+            <h2>Your Chores</h2>
+            <ul class="chore-list" id="child-chore-list">
+                <!-- Child's chores will appear here -->
+            </ul>
+        </div>
+        
         <div class="chatbot">
             <h2>Chatbot Reminders</h2>
             <div class="chatbot-messages" id="chatbot-messages"></div>
@@ -102,6 +139,7 @@
             if (choreName && assignedTo) {
                 chores.push({ name: choreName, assignedTo: assignedTo });
                 updateChoreList();
+                updateChildChoreList();
                 document.getElementById('chore-name').value = '';
                 document.getElementById('assigned-to').value = '';
             }
@@ -116,6 +154,20 @@
                 choreItem.textContent = `${chore.name} - Assigned to: ${chore.assignedTo}`;
                 choreListElement.appendChild(choreItem);
             });
+        }
+
+        function updateChildChoreList() {
+            const childName = prompt("Enter your name to view your chores:");
+            if (childName) {
+                const childChoreListElement = document.getElementById('child-chore-list');
+                childChoreListElement.innerHTML = '';
+                chores.filter(chore => chore.assignedTo.toLowerCase() === childName.toLowerCase()).forEach(chore => {
+                    const choreItem = document.createElement('li');
+                    choreItem.className = 'chore-item';
+                    choreItem.textContent = chore.name;
+                    childChoreListElement.appendChild(choreItem);
+                });
+            }
         }
 
         function sendMessage() {
@@ -136,6 +188,16 @@
             messageElement.textContent = `${sender}: ${message}`;
             messagesContainer.appendChild(messageElement);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            const buttons = document.querySelectorAll('.tabs button');
+            buttons.forEach(button => button.classList.remove('active'));
+            document.querySelector(`.tabs button[onclick="showTab('${tabId}')"]`).classList.add('active');
         }
     </script>
 </body>
